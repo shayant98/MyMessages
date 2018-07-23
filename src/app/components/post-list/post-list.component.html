@@ -1,3 +1,15 @@
-<p>
-  post-list works!
-</p>
+<mat-accordion multi="true" *ngIf="posts.length > 0; else noPostAddedYet">
+  <mat-expansion-panel *ngFor='let post of posts'>
+    {{post.title}}
+    <mat-expansion-panel-header>
+      <h4>I'm an Expansion Header</h4>
+    </mat-expansion-panel-header>
+    <p>{{post.content}}</p>
+  </mat-expansion-panel>
+</mat-accordion>
+
+<ng-template #noPostAddedYet>
+ <mat-card class="info-text mat-body-1">
+    <p>No Posts</p>
+ </mat-card>
+</ng-template>
