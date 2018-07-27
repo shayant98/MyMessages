@@ -41,16 +41,18 @@ export class PostCreateComponent implements OnInit {
         this.mode = 'edit'
         this.postId = paramMap.get('id')
         this.isloading = true
-        this.postService.editPost(this.postId).subscribe(post => {
+        this.postService.getPost(this.postId).subscribe(post => {
           this.isloading = false
           this.post = {
             id: post._id,
             title: post.title,
             content: post.content,
+            imagePath: post.imgPath
           }
           this.form.setValue({
             'title': this.post.title, 
-            'content': this.post.content
+            'content': this.post.content,
+            'image': this.post.imagePath
           })
         });
       }else {
@@ -62,14 +64,14 @@ export class PostCreateComponent implements OnInit {
 
   onSavePost(){
     if(this.form.valid == false){
-      alert('Vul alles in!')
+      return;
     }else{
       this.isloading = true
       if(this.mode === 'create'){
         this.postService.addPost(this.form.value.title, this.form.value.content, this.form.value.image)
 
       }else{
-        this.postService.updatePost(this.postId,this.form.value.title, this.form.value.content);
+        this.postService.updatePost(this.postId,this.form.value.title, this.form.value.content, this.form.value.image);
       }
       this.form.reset();
       

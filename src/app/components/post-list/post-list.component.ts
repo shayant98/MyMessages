@@ -17,8 +17,8 @@ postsSub : Subscription
   isLoading: boolean = false
   ngOnInit() {
     this.isLoading = true
-    this.postsService.getPost();
-     this.postsSub =  this.postsService.getPostUpdateListener().subscribe(posts =>{
+    this.postsService.getPosts();
+     this.postsSub =  this.postsService.getPostsUpdateListener().subscribe(posts =>{
        this.isLoading = false
       this.posts = posts
     },err =>{

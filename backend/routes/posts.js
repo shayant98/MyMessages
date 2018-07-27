@@ -40,24 +40,41 @@ router.use((req,res,next)=>{
 })
 
 router.post('', multer({storage: storage}).single("image"),(req,res,next) => {
+    const url = req.protocol + '://' + req.get('host');
     const post = new Post({
         title: req.body.title,
-        content: req.body.content
+        content: req.body.content,
+        imgPath: url + '/images/' + req.file.filename
     });
     post.save().then(createdPost => {
         res.status(201).json({
             message: 'post added successfully',
-            postId: createdPost._id
+            post: {
+                id: createdPost._id,
+                title: createdPost.title,
+                content: createdPost.content,
+                imgPath: createdPost.imgPath
+            }
+
         });
     });
     
 });
 
-router.put('/:id',(req,res,next) => {
+router.put('/:id',multer({storage: storage}).single("image"),(req,res,next) => {
+    let imgPath = req.body.imagePath;
+    if(req.file){
+        const url = req.protocol + '://' + req.get('host');
+        imgPath =  url + '/images/' + req.file.filename
+    }else {
+
+    }
+    
     const post = new Post({
         _id: req.body.id,
         title: req.body.title,
-        content: req.body.content
+        content: req.body.content, 
+        imgPath: imgPath
     })
     Post.updateOne({_id: req.params.id}, post).then(result => {
         console.log(post);
@@ -78,6 +95,8 @@ router.get('',(req,res,next) => {
 router.get('/:id',(req,res,next) => {    
     Post.findById(req.params.id).then(post => {
         if(post){
+            
+            
             res.status(200).json(post);
         }else{
             res.status(404).json({message: 'post not found'});
