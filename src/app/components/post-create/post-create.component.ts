@@ -1,7 +1,7 @@
 import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { Post } from "../../models/Post.model";
 import { PostsService } from "../../services/posts.service";
-
+import {mimeType} from './mime-type.validator'
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
@@ -31,7 +31,8 @@ export class PostCreateComponent implements OnInit {
         validators:[Validators.required]
       }),
       'image': new FormControl(null,{
-        validators:[Validators.required]
+        validators:[Validators.required],
+        asyncValidators:[mimeType]
       })
 
     })
@@ -65,7 +66,7 @@ export class PostCreateComponent implements OnInit {
     }else{
       this.isloading = true
       if(this.mode === 'create'){
-        this.postService.addPost(this.form.value.title, this.form.value.content)
+        this.postService.addPost(this.form.value.title, this.form.value.content, this.form.value.image)
 
       }else{
         this.postService.updatePost(this.postId,this.form.value.title, this.form.value.content);
