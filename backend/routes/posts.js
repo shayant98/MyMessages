@@ -77,17 +77,28 @@ router.put('/:id',multer({storage: storage}).single("image"),(req,res,next) => {
         imgPath: imgPath
     })
     Post.updateOne({_id: req.params.id}, post).then(result => {
-        console.log(post);
-        
         res.status(200).json({message: 'update successfull'})
     })
 })
 
 router.get('',(req,res,next) => {    
-    Post.find().then(posts => {
-        res.status(200).json({
-            message:'Post fecthed successfully!',
-            posts: posts
+    const pageSize = +req.query.pagesize
+    const currentPage = +req.query.page
+    const postQuery = Post.find()
+    let fetchedPosts;
+    if(pageSize && currentPage){
+        postQuery.skip(pageSize * (currentPage - 1))
+        .limit(pageSize)
+    }
+    postQuery.then(posts => {
+        fetchedPosts = posts
+        return Post.countDocuments();
+        }).then(count => {
+            res.status(200).json({
+                message:'Post fecthed successfully!',
+                maxPosts: count,
+                posts: fetchedPosts
+                
         })
     })
 });
@@ -95,8 +106,6 @@ router.get('',(req,res,next) => {
 router.get('/:id',(req,res,next) => {    
     Post.findById(req.params.id).then(post => {
         if(post){
-            
-            
             res.status(200).json(post);
         }else{
             res.status(404).json({message: 'post not found'});
@@ -108,9 +117,6 @@ router.delete('/:id',(req,res,next) =>{
     Post.deleteOne({_id: req.params.id}).then(result => {
     res.status(200).json({message: 'Post Deleted'})
     })
-
-
-    
 });
 
 module.exports = router;
