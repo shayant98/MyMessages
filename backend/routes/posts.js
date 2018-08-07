@@ -107,11 +107,7 @@ router.get('', (req, res, next) => {
       posts: fetchedPosts
 
     })
-  }).catch(
-    res.status(401).json({
-      message: "userNot Found"
-    })
-  )
+  })
 });
 
 router.get('/:id', (req, res, next) => {
