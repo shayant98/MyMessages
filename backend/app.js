@@ -8,7 +8,7 @@ const userRoutes = require('./routes/users')
 const app = express();
 
 //connect to MongoDB
-mongoose.connect('mongodb+srv://shayant:AJXdUcozYVkHtXCZ@cluster0-uj0cy.mongodb.net/node-angular', { useNewUrlParser: true }).then(() =>{
+mongoose.connect('mongodb+srv://shayant:'+process.env.MONGO_ATLAS_PW+'@cluster0-uj0cy.mongodb.net/node-angular', { useNewUrlParser: true }).then(() =>{
     console.log('Connected Successfully');
     
 }).catch(()=>{

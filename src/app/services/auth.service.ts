@@ -13,7 +13,9 @@ import {
 import {
   Subject
 } from 'rxjs';
+import {environment} from '../../environments/environment'
 
+const BACKEND_URL = environment.apiUrl+ '/user'
 
 @Injectable({
   providedIn: 'root'
@@ -68,7 +70,7 @@ export class AuthService {
       email: email,
       password: password
     }
-    this.http.post('http://localhost:3000/api/user/signup', AuthData).subscribe(AuthResponse => {
+    this.http.post(BACKEND_URL+'/signup', AuthData).subscribe(AuthResponse => {
       this.router.navigate(['/']);
     }, error => {
       this.authStateListener.next(false)
@@ -93,7 +95,7 @@ export class AuthService {
       token: string,
       expiresIn: number,
       userId: string
-    } > ('http://localhost:3000/api/user/login', AuthData).subscribe(AuthResponse => {
+    } > (BACKEND_URL+'/login', AuthData).subscribe(AuthResponse => {
       const token = AuthResponse.token
       this.token = token
       if (token) {
