@@ -53,7 +53,11 @@ router.post('',checkAuth, multer({
       }
 
     });
-  });
+  }).catch(error => {
+    res.status(500).json({
+      message: 'Creating a post failed!'
+    })
+  })
 
 });
 
@@ -82,10 +86,14 @@ router.put('/:id',checkAuth, multer({
       });
     }else{
       res.status(401).json({
-        message: 'failed'
+        message: 'Not Authortized'
       });
     }
-  });
+  }).catch(error => {
+    res.status(500).json({
+      message: 'Could not update post!'
+    })
+  })
 });
 
 router.get('', (req, res, next) => {
@@ -107,6 +115,10 @@ router.get('', (req, res, next) => {
       posts: fetchedPosts
 
     })
+  }).catch(error => {
+    res.status(500).json({
+      message: 'Fetching posts failed!'
+    })
   })
 });
 
@@ -119,6 +131,10 @@ router.get('/:id', (req, res, next) => {
         message: 'post not found'
       });
     }
+  }).catch(error => {
+    res.status(500).json({
+      message: 'Fetching post failed!'
+    })
   })
 });
 
@@ -136,7 +152,11 @@ router.delete('/:id',checkAuth, (req, res, next) => {
         message: 'Failed'
       });
     }
-  });
+  }).catch(error => {
+    res.status(500).json({
+      message: 'Unable to delete Post!'
+    })
+  })
 });
 
 module.exports = router;
