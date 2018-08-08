@@ -10,11 +10,16 @@ router.post('/signup', (req,res,next) => {
             email: req.body.email,
             password: hash
         });
-        user.save().then(result => {
+        user.save()
+        .then(result => {
             res.status(200).json({
                 message: 'user created!',
                 result: result
             });
+        }).catch(err => {
+            res.status(500).json({
+                message: 'Invalid authentication credentials!'
+            })
         })
         
     });
@@ -49,13 +54,15 @@ router.post('/login', (req, res, next) => {
         );
         
         res.status(200).json({
-            token: token
+            token: token,
+            expiresIn: 3600,
+            userId: fetchedUser._id
         })
 
     }).catch(err => {
         console.log(err);
         return res.status(401).json({
-            message: 'Login Failed!'
+            message: 'Invalid authentication credentials!'
         })
     })
 })

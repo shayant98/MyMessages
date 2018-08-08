@@ -1,16 +1,18 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, OnDestroy } from '@angular/core';
 import { Post } from "../../models/Post.model";
 import { PostsService } from "../../services/posts.service";
 import {mimeType} from './mime-type.validator'
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Subscription } from '../../../../node_modules/rxjs';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-post-create',
   templateUrl: './post-create.component.html',
   styleUrls: ['./post-create.component.css']
 })
-export class PostCreateComponent implements OnInit {
+export class PostCreateComponent implements OnInit,OnDestroy {
   isloading =  false
   enteredTitle: string;
   enteredContent: string;
@@ -19,10 +21,14 @@ export class PostCreateComponent implements OnInit {
   post: Post 
   form: FormGroup
   imagePreview: string
-
-  constructor(private postService: PostsService,  private route: ActivatedRoute) { }
+  private authStatusSub: Subscription;
+  constructor(private postService: PostsService,private authService: AuthService,  private route: ActivatedRoute) { }
 
   ngOnInit() {
+    this.authStatusSub = this.authService.getauthStateListener().subscribe(authStatus =>{
+      this.isloading = false
+    })
+
     this.form = new FormGroup({
       'title': new FormControl(null, {
         validators:[Validators.required, Validators.minLength(3)]
@@ -47,7 +53,8 @@ export class PostCreateComponent implements OnInit {
             id: post._id,
             title: post.title,
             content: post.content,
-            imagePath: post.imgPath
+            imagePath: post.imgPath,
+            creator: post.creator
           }
           this.form.setValue({
             'title': this.post.title, 
@@ -87,6 +94,10 @@ onImagePicked(event: Event){
     this.imagePreview = reader.result;
   }
   reader.readAsDataURL(file)
+}
+
+ngOnDestroy(){
+  this.authStatusSub.unsubscribe()
 }
 
 }
